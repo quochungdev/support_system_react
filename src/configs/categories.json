@@ -1,0 +1,20 @@
+{
+    "cateigories": [
+      {
+        "id": 1,
+        "title": "Tuyển Sinh Đại Học"
+      },
+      {
+        "id": 2,
+        "title": "Tuyển Sinh Cao Đẳng"
+      },
+      {
+        "id": 3,
+        "title": "Tuyển Sinh Hệ Đại Trà"
+      },
+      {
+        "id": 4,
+        "title": "Tuyển Sinh Đại Học"
+      }
+    ]
+  }

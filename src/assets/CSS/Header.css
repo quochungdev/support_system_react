@@ -1,0 +1,101 @@
+/* Header.css
+.header {
+  background-color: #1D559F;
+  color: white;
+  padding: 10px 0;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+
+}
+
+.nav-item a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-item a:hover {
+  color: #ffc107;
+}
+
+.has-submenu {
+  position: relative;
+}
+
+.tuyensinh-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+  padding: 10px;
+  width: 150px;
+
+}
+
+.has-submenu:hover .tuyensinh-menu {
+  display: block;
+}
+
+.tuyensinh-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tuyensinh-menu li {
+  margin-bottom: 8px;
+}
+
+.tuyensinh-menu a {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.tuyensinh-menu a:hover {
+  color: #ffc107;
+}
+.menu-image {
+  margin-left: -97px;
+}
+.menu-image > img { 
+  width: 82%;
+} */
+
+
+.nav-bar-container {
+  max-width: 1400px !important
+}
+
+
+.custom-background{
+  background-color: rgb(29,85,159);
+  margin-bottom: 20px;
+  height: 450px;
+}
+
+.custom-background a{
+  padding-left: 10px !important;
+  padding-right: 12px !important
+}
+
+
+.nav-bar-container {
+  margin-top: -350px;
+}
+
+.navbar-brand{
+  color: white !important;
+}

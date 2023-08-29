@@ -1,0 +1,28 @@
+{
+    "article": [
+      {
+        "id": 1,
+        "title": "Tuyển Sinh Đại Học",
+        "content": "Các bước để đăng ký tuyển sinh ...",
+        "url": "https://ou.edu.vn/wp-content/uploads/2016/06/sdh.jpg"
+      },
+      {
+        "id": 2,
+        "title": "Tuyển Sinh Cao Đẳng",
+        "content": "Các bước để đăng ký tuyển sinh ...",
+        "url": "https://ou.edu.vn/wp-content/uploads/2016/06/sdh.jpg"
+      },
+      {
+        "id": 3,
+        "title": "Tuyển Sinh Hệ Đại Trà",
+        "content": "Các bước để đăng ký tuyển sinh ...",
+        "url": "https://ou.edu.vn/wp-content/uploads/2016/06/sdh.jpg"
+      },
+      {
+        "id": 4,
+        "title": "Tuyển Sinh Đại Học",
+        "content": "Các bước để đăng ký tuyển sinh ...",
+        "url": "https://ou.edu.vn/wp-content/uploads/2016/06/sdh.jpg"
+      }
+    ]
+  }

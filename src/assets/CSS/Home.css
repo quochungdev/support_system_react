@@ -1,0 +1,39 @@
+
+/* CSS cho dòng đầu tiên */
+.yellow-background {
+  background-color: yellow;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* CSS cho item đầu tiên */
+.featured-article {
+  margin-bottom: 30px;
+}
+
+.featured-article .article-image img {
+  max-width: 100%;
+  height: auto;
+  max-height: 300px; /* Kích thước hình lớn hơn */
+}
+
+.featured-article .article-title {
+  font-size: 24px;
+  margin-top: 10px;
+}
+
+/* CSS cho các item bình thường */
+.normal-article {
+  margin-bottom: 20px;
+}
+
+.normal-article .article-image img {
+  max-width: 100%;
+  height: auto;
+  max-height: 150px; /* Kích thước hình nhỏ hơn */
+}
+
+.normal-article .article-title {
+  font-size: 18px;
+  margin-top: 10px;
+}

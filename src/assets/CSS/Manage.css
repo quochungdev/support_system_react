@@ -1,0 +1,7 @@
+.zoomable-image {
+  transition: transform 0.3s;  
+}
+
+.zoomable-image:hover {
+  transform: scale(5.2);  
+}
