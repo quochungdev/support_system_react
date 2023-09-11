@@ -1,14 +1,20 @@
 import { MDBCol, MDBContainer, MDBRow } from "mdb-react-ui-kit";
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { toastError, toastSuccess } from "./Toast/Notification";
 import Apis, { authApi, authFormDataApi, endpoints } from "../configs/Apis";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { toastError, toastSuccess } from "./Toast/Notification";
 
 const Register = () => {
+  const navigate = useNavigate();
+
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [email, setEmail] = useState();
     const [avatar, setAvatar] = useState(null); // Khởi tạo là null
+
+    const [validated, setValidated] = useState(false);
 
     const handleAvatarChange = (e) => {
         const selectedFile = e.target.files[0]; // Lấy tệp được chọn
@@ -16,8 +22,14 @@ const Register = () => {
       };
 
     const register = (evt) => {
-        console.log(avatar);
         evt.preventDefault();
+        const form = evt.currentTarget;
+        if (form.checkValidity() === false) {
+           evt.preventDefault();
+           evt.stopPropagation();
+         }
+       setValidated(true);
+
 
         const formData = new FormData();
         formData.append("username", username);
@@ -29,6 +41,7 @@ const Register = () => {
             try {
                 let res = await authApi().post(endpoints['register'], formData)
                 toastSuccess("Đăng ký thành công")
+                navigate('/dangnhap');
                 console.log(res.data);
             } catch (ex) {
                 console.error(ex);
@@ -43,34 +56,48 @@ const Register = () => {
         <MDBRow>
           <MDBCol col='6' className="mb-5">
             <div className="d-flex flex-column ms-5">
+            <ToastContainer />
 
               <div className="text-center">
                 <img src="https://ou.edu.vn/wp-content/uploads/2018/08/LOGO-TRUONGV21-12-2018-01-300x300.png"
                   style={{width: '185px'}} alt="logo" />
                 <h4 className="mt-1 mb-5 pb-1 font-bold ">ĐĂNG KÝ</h4>
               </div>
-              <Form onSubmit={register}>
+              <Form noValidate validated={validated} onSubmit={register}>
                 <Form.Group className="mb-3">
                     <Form.Label>Tên đăng nhập</Form.Label>
                     <Form.Control type="text" value={username}
+                                  required
                                   onChange={e => setUsername(e.target.value)} 
                                   placeholder="Tên đăng nhập" />
+                                  <Form.Control.Feedback type="invalid">
+                Vui lòng điền tên đăng nhập
+              </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Mật khẩu</Form.Label>
                     <Form.Control type="password" value={password}
+                                  required
                                   onChange={e => setPassword(e.target.value)}  
                                   placeholder="Mật khẩu" />
+                                  <Form.Control.Feedback type="invalid">
+                Vui lòng điền mật khẩu
+              </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control type="email" value={email}
+                                  required
                                   onChange={e => setEmail(e.target.value)}  
-                                  placeholder="Mật khẩu" />
+                                  placeholder="Email" />
+                                  <Form.Control.Feedback type="invalid">
+                Vui lòng điền Email
+              </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Avatar</Form.Label>
                     <Form.Control type="file" 
+                                  required
                                  accept="image/*"
                                  onChange={handleAvatarChange} // Gọi hàm khi chọn tệp
                                  placeholder="Chọn file" />
@@ -78,7 +105,7 @@ const Register = () => {
 
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Button type="submit" href="/dangnhap" variant="danger">Đăng ký</Button>
+                    <Button type="submit" variant="danger">Đăng ký</Button>
                 </Form.Group>
             </Form>
               <div className="d-flex flex-row align-items-center justify-content-center pb-4 mb-4">

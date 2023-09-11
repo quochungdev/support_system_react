@@ -20,7 +20,8 @@
 }
 
 .own-message {
-    background: #E4E6EB;
+    background: #0084FF;
+    color: white;
     border-bottom-left-radius: 15px;    
     align-self: flex-end;
     text-align: right;

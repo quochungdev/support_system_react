@@ -9,12 +9,16 @@ import { MyUserContext } from '../../App';
 import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 
-const ModalCreateArticle = () => {
+
+const ModalCreateArticle = ({loadArticles, validated, setValidated }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
 
     const [user] = useContext(MyUserContext);
     const [categories, setCategories] = useState([]);
@@ -50,25 +54,31 @@ const ModalCreateArticle = () => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(''); // State để lưu category.id  
     const [selectedFacultyId, setSelectedFacultyId] = useState(''); 
     const [titleArticle, setTitleArtcile] = useState()
-    const [contentArticle, setContentArtcile] = useState()
+    const [contentArticle, setContentArtcile] = useState('')
     const [thumbnailArticle, setThumbnailArtcile] = useState(null)
-    // const [dateArticle, setDateArtcile] = useState()
 
-    // const handleDateChange = (date) => {
-    //     setDateArtcile(date);
-    //   };
-    
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0]; // Lấy tệp được chọn
         setThumbnailArtcile(selectedFile); // Lưu File object vào state
       };
+
+    const handleContentChange = (newContent) => {
+      setContentArtcile(newContent)
+    }
    
-      const createArticle = async () => {
+      const createArticle = async (evt) => {
+        const form = evt.currentTarget;
+
+          if (form.checkValidity() === false) {
+            evt.preventDefault();
+            evt.stopPropagation();
+          }
+          setValidated(true)
+
         const formData = new FormData();
         formData.append("title", titleArticle);
         formData.append("content", contentArticle);
         formData.append("thumbnail", thumbnailArticle)
-        // formData.append("date", dateArticle)
         formData.append("user_id", user.id)
         formData.append("cateId", selectedCategoryId)
         formData.append("facultyId", selectedFacultyId)
@@ -76,7 +86,7 @@ const ModalCreateArticle = () => {
           try {
               let res = await authApi().post(endpoints['create_article'] , formData)
               console.log(res.data);
-            //   setFaculties(prevFaculties => [...prevFaculties, res.data]);
+              loadArticles()
               toastSuccess("TẠO THÀNH CÔNG")
               handleClose()
           } catch (ex) {
@@ -84,7 +94,6 @@ const ModalCreateArticle = () => {
               toastError("TẠO THẤT BẠI")
           }        
       }
-      
     return (
         <>
           <Button className="w-20 ml-5 mr-5" variant="dark" onClick={handleShow}>
@@ -96,7 +105,7 @@ const ModalCreateArticle = () => {
               <Modal.Title>Tạo bài viết mới</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Form>
+              <Form noValidate validated={validated} onSubmit={createArticle}>
                 <Form.Group className="mb-3">
                   <Form.Label>Tiêu đề</Form.Label>
                   <Form.Control
@@ -104,39 +113,44 @@ const ModalCreateArticle = () => {
                     onChange={e => setTitleArtcile(e.target.value)}
                     // placeholder={faculty.name}
                     autoFocus
+                    required
                   />
+                  <Form.Control.Feedback type="invalid">
+                     Vui lòng nhập tiêu đề
+                  </Form.Control.Feedback>
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                   <Form.Label>Nội dung</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    onChange={e => setContentArtcile(e.target.value)}
-                    // placeholder={faculty.name}
-                    autoFocus
-                  />
+                    <ReactQuill required theme="snow" value={contentArticle} onChange={handleContentChange} />
+                    <Form.Control.Feedback type="invalid">
+                     Vui lòng nhập nội dung
+                  </Form.Control.Feedback>
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                         <Form.Label>Hình ảnh</Form.Label>
                         <Form.Control type="file" 
+                                      required
                                      accept="image/*"
                                      onChange={handleImageChange} // Gọi hàm khi chọn tệp
                                      placeholder="Chọn file" />
                           {thumbnailArticle && <img className="w-20" src={URL.createObjectURL(thumbnailArticle)} alt="Avatar Preview" />}
-    
+                  <Form.Control.Feedback type="invalid">
+                     Vui lòng chọn ảnh
+                  </Form.Control.Feedback>
                   </Form.Group>
-                {/* <Form.Group className="mb-3">
-                <label>Select Date:</label>
-                  <ReactDatePicker
-                    selected={dateArticle}
-                    onChange={handleDateChange}
-                    dateFormat="dd-MM-yyyy"
-                     />
-                </Form.Group> */}
                 <Form.Select
+                 required
+                 label="Agree to terms and conditions"
+                 feedback="You must agree before submitting."
+                 feedbackType="invalid"
                  aria-label="Default select example"
                  onChange={(e) => setSelectedCategoryId(e.target.value)} // Cập nhật selectedCategoryId khi có sự thay đổi trong dropdown
                  >
+                  
                     <option>Chọn danh mục</option>
+                    
                     {categories.map(c => (
                         <>
                         <option value={c.id}>{c.name}</option>

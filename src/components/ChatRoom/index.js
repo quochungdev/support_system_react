@@ -5,19 +5,20 @@ import { MessageInput } from "../MessageInput";
 import { MessageList } from "../MessageList";
 
 function ChatRoom() {
+
   const params = useParams();
+  console.log( params);
+
   const room = chatRooms.find((x) => x.id === params.id);
   if(!room){
-    //404
+    console.log("Không có room");
   }
-
-  
 
  return (
         <>
             <h2>{room.title}</h2>
             <div>
-                <Link to="/">⬅️ Back to all rooms</Link>
+                <Link to="/room">⬅️ Back to all rooms</Link>
             </div>
             <div className="messages-container ">
               <MessageInput roomId={room.id}/>

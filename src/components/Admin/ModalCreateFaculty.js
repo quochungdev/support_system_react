@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal';
 import { authApi, endpoints } from '../../configs/Apis';
 import { toastError, toastSuccess } from '../Toast/Notification';
 
-const ModalCreateFaculty = ({setFaculties }) => {
+const ModalCreateFaculty = ({loadFaculties }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -33,7 +33,8 @@ const ModalCreateFaculty = ({setFaculties }) => {
           try {
               let res = await authApi().post(endpoints['create_faculty'] , formData)
               console.log(res.data);
-              setFaculties(prevFaculties => [...prevFaculties, res.data]);
+              loadFaculties()
+              // setFaculties(prevFaculties => [...prevFaculties, res.data]);
               toastSuccess("TẠO THÀNH CÔNG")
               handleClose()
               

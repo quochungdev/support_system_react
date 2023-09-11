@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { Button, Card, Form, Table } from "react-bootstrap"
+import { Button, Card, Form, Modal, Table } from "react-bootstrap"
 import Apis, { authApi, endpoints } from "../../configs/Apis"
 import cookie from "react-cookies";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,17 +8,26 @@ import ModalUpdateFaculty from "./ModalUpdateFaculty";
 import ModalCreateFaculty from "./ModalCreateFaculty";
 import { toastError, toastSuccess } from "../Toast/Notification";
 import ModalCreateArticle from "./ModalCreateArticle";
+import ModalUpdateArticle from "./ModalUpdateArticle";
 
-const ManageArticle = () => {
+const ManageArticle = ( {searchKeyword, showDeleteModal, setShowDeleteModal}) => {
     const [showMore, setShowMore] = useState({});
     const [isTableFacultyVisible, setIsTableFacultyVisible] = useState(true); // Mặc định là hiển thị
     const [articles, setArticles] = useState([]);
+    
+    const [validated, setValidated] = useState(false);
 
     const loadArticles = async () => {
       try {
         let res = await Apis.get(endpoints['articles']);
-        setArticles(res.data);
+
+        const formattedArticle = res.data.map(article => ({
+          ...article,
+          date: new Date(article.date).toLocaleString(),
+        }));
+        setArticles(formattedArticle);
         console.log(res.data);
+
       } catch (ex) {
         console.error(ex);
         toastError("Lỗi khi tải danh sách");
@@ -30,6 +39,8 @@ const ManageArticle = () => {
       }, []);
 
       const handleDelete = async (articleId) => {
+        setShowDeleteModal(true);
+
         try {
           let res = await authApi().delete(endpoints.delete_article(articleId));
           toastSuccess("Xóa thành công")
@@ -47,16 +58,22 @@ const ManageArticle = () => {
           [articleId]: !prev[articleId],
         }))
       }
+      const filteredArticles = articles.filter((m) =>
+      m.title.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
 
     return (
       <div>
-      <h2>Danh sách bài viết</h2>
-      <Button variant="primary" onClick={() => setIsTableFacultyVisible(!isTableFacultyVisible)}>
+      <ToastContainer />
+      <h2 className="text-center text-blue-700 font-bold mb-5 mt-2">
+        Quản Lý Bài Viết
+      </h2>      
+      <Button variant="info" onClick={() => setIsTableFacultyVisible(!isTableFacultyVisible)}>
         {isTableFacultyVisible ? "Ẩn danh sách" : "Hiển thị danh sách"}
       </Button>
-      <ModalCreateArticle setArticles={setArticles}/>
+      <ModalCreateArticle validated={validated} setValidated={setValidated} loadArticles={loadArticles}/>
       {isTableFacultyVisible &&  
-      <Table striped bordered hover size="sm">
+      <Table className="mt-5" striped bordered hover size="sm">
         <thead>
         <tr className="text-center">
             <th>ID</th>
@@ -71,12 +88,13 @@ const ManageArticle = () => {
           </tr>
         </thead>
         <tbody>
-          {articles.map(article => (
+          {filteredArticles.map(article => (
             <tr key={article.id}>
               <td>{article.id}</td>
               <td>{article.title}</td>
               <td>
-                {showMore[article.id] ? article.content : `${article.content.substring(0,140)}`}
+                {showMore[article.id] ? (<div className="rendered-content" dangerouslySetInnerHTML={{ __html: article.content }} />) 
+                : (<div className="rendered-content" dangerouslySetInnerHTML={{ __html: article.content.substring(0,140) }} />)}
                 {article.content.length > 150 && (
                   <a className="decoration-emerald-500 pl-5"
                      onClick={() => toggleShowMore(article.id)}>{showMore[article.id] ? "Thu gọn" : "Xem thêm"}</a>
@@ -85,7 +103,8 @@ const ManageArticle = () => {
               <td>
               <img className="mb-10 -mr-200 w-20 zoomable-image" variant="top" src={article.thumbnail} />
               </td>
-              <td>{article.date}</td>
+              <td>{article.date}
+              </td>
               <td>{article.userId.username}</td>
               <td>{article.categoryId.name}</td>
               <td>{article.facultyId.name}</td>
@@ -93,18 +112,44 @@ const ManageArticle = () => {
                 <Button className="w-100 mb-1" variant="success">
                   Xem
                 </Button>
-                {/* <ModalUpdateFaculty faculties={faculties} setFaculties={setFaculties} faculty={faculty} /> */}
+                <ModalUpdateArticle loadArticles={loadArticles} articles={articles} setArticles={setArticles} article={article} />
                 <Button className="w-100 mb-1"  
                         variant="danger"
-                        onClick={() => handleDelete(article.id)}
+                        onClick={() => setShowDeleteModal({ [article.id]: true })}
                         >
                   Xóa
                 </Button>
               </td>
+                     {/* Modal hỏi người dùng */}
+                     <Modal 
+                      show={showDeleteModal[article.id]}
+                      onHide={() => setShowDeleteModal({ [article.id]: false })}>                    
+                      <Modal.Header closeButton>
+                      <Modal.Title>Xác nhận xóa</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Bạn có chắc muốn xóa bài viết này?</Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                        Hủy
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => {
+                          // Gọi hàm xóa bài viết tại đây
+                          handleDelete(article.id);
+                          setShowDeleteModal(false); // Đóng modal sau khi xóa
+                        }}
+                      >
+                        Xóa
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
             </tr>
           ))}
         </tbody>
       </Table> }
+
+
     </div>
     )
 }

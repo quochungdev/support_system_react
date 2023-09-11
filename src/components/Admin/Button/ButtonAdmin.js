@@ -10,7 +10,7 @@ const ButtonAdmin = () => {
   
     return (
       <div>
-        {isAdmin && <Button href="/admin/home" className="!bg-black !font-bold ">GIAO DIỆN ADMIN</Button>}
+        {isAdmin && <Button href="/admin/home" className="!bg-black !font-bold p-3">GIAO DIỆN ADMIN</Button>}
         {/* Các nút hoặc chức năng riêng dành cho admin */}
       </div>
     );

@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal';
 import { authApi, endpoints } from '../../configs/Apis';
 import { toastError, toastSuccess } from '../Toast/Notification';
 
-function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
+function ModalUpdateFaculty({ faculty, setFaculties, faculties, loadFaculties }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -43,26 +43,35 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
       formData.append("video_url", videoFaculty)
       formData.append("image_url", imageFaculty)
 
+      // Kiểm tra nếu thumbnailArticle có giá trị (đã thay đổi) thì mới thêm vào FormData
+      if (imageFaculty) {
+        formData.append("image_url", imageFaculty);
+      } else {
+        // Nếu không thay đổi thì sử dụng giá trị từ article.thumbnail
+        const blob = await fetch(faculty.image_url).then((res) => res.blob());
+        const file = new File([blob], "thumbnail.jpg"); // Đặt tên và loại tệp theo ý muốn
+        formData.append("image_url", file);
+      }
+
         try {
-          console.log("ID đang dùng (trong try catch): " + faculty.id);
 
             let res = await authApi().post(endpoints['update_faculty'] , formData)
             console.log(res.data);
             console.log("ID đang dùng (sau khi res.data): " + faculty.id);
-
-            setFaculties((prevFaculties) => {
-              return prevFaculties.map((fal) => {
-                if (fal.id === faculty.id) {
-                  return { ...fal,
-                    name: nameFaculty, 
-                    description: descFaculty, 
-                    websiteUrl: websiteFaculty, 
-                    videoUrl: videoFaculty, 
-                    imageUrl: imageFaculty };
-                }
-                return fal;
-              });
-            });
+            loadFaculties()
+            // setFaculties((prevFaculties) => {
+            //   return prevFaculties.map((fal) => {
+            //     if (fal.id === faculty.id) {
+            //       return { ...fal,
+            //         name: nameFaculty, 
+            //         description: descFaculty, 
+            //         websiteUrl: websiteFaculty, 
+            //         videoUrl: videoFaculty, 
+            //         imageUrl: imageFaculty };
+            //     }
+            //     return fal;
+            //   });
+            // });
             toastSuccess("CẬP NHẬT THÀNH CÔNG")
             handleClose()
             
@@ -71,23 +80,10 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
             toastError("CẬP NHẬT THẤT BẠI")
         }        
     }
-  // Đổi tên hàm để thể hiện mục đích
-  const updatedFaculties = faculties.map((fal) => {
-    if (fal.id === faculty.id) {
-      return {
-        ...fal,
-        name: nameFaculty,
-        description: descFaculty,
-        websiteUrl: websiteFaculty,
-        videoUrl: videoFaculty,
-        imageUrl: imageFaculty
-      };
-    }
-    return fal;
-  });
+
   return (
     <>
-      <Button className="w-20 ml-5 mr-5" variant="dark" onClick={handleShow}>
+      <Button className="w-100 mt-2 mb-2" variant="dark" onClick={handleShow}>
         Sửa
       </Button>
 
@@ -101,6 +97,7 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
               <Form.Label>Tên khoa</Form.Label>
               <Form.Control
                 type="text"
+                value={nameFaculty}
                 onChange={e => setNameFaculty(e.target.value)}
                 placeholder={faculty.name}
                 autoFocus
@@ -110,6 +107,7 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
               <Form.Label>Mô tả</Form.Label>
               <Form.Control
                 type="text"
+                value={descFaculty}
                 onChange={e => setDescFaculty(e.target.value)}
                 placeholder={faculty.description}
                 autoFocus
@@ -119,6 +117,7 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
               <Form.Label>Website</Form.Label>
               <Form.Control
                 type="text"
+                value={websiteFaculty}
                 onChange={e => setWebsiteFaculty(e.target.value)}
                 placeholder={faculty.websiteUrl}
                 autoFocus
@@ -128,6 +127,7 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
               <Form.Label>Video</Form.Label>
               <Form.Control
                 type="text"
+                value={videoFaculty}
                 onChange={e => setVideoFaculty(e.target.value)}
                 placeholder={faculty.videoUrl}
                 autoFocus
@@ -140,8 +140,7 @@ function ModalUpdateFaculty({ faculty, setFaculties, faculties }) {
                                  onChange={handleImageChange} // Gọi hàm khi chọn tệp
                                  placeholder="Chọn file" />
                       {imageFaculty && <img className="w-20" src={URL.createObjectURL(imageFaculty)} alt="Avatar Preview" />}
-
-              </Form.Group>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>

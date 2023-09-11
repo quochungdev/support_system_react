@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react"
-import { Button, Card, Form, Table } from "react-bootstrap"
+import { Button, Card, Form, Modal, Table } from "react-bootstrap"
 import Apis, { authApi, endpoints } from "../../configs/Apis"
-import cookie from "react-cookies";
-import { ToastContainer, toast } from "react-toastify";
 import '../../assets/CSS/Manage.css'
 import ModalUpdateFaculty from "./ModalUpdateFaculty";
 import ModalCreateFaculty from "./ModalCreateFaculty";
-import { toastError, toastSuccess } from "../Toast/Notification";
+import Notification, { toastError, toastSuccess } from "../Toast/Notification";
+import { ToastContainer, toast } from "react-toastify";
 
-const ManageFaculty = () => {
+
+const ManageFaculty = ( { searchKeyword, showDeleteModal, setShowDeleteModal } ) => {
     const [isTableFacultyVisible, setIsTableFacultyVisible] = useState(true); // Mặc định là hiển thị
     const [faculties, setFaculties] = useState([]);
 
@@ -22,7 +22,6 @@ const ManageFaculty = () => {
         toastError("Lỗi khi tải danh sách");
       }
     };
-
     useEffect(() => { 
           loadFaculties()
       }, []);
@@ -39,15 +38,22 @@ const ManageFaculty = () => {
         }
       };
 
+      const filteredFaculties = faculties.filter((f) =>
+      f.name.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+
     return (
       <div>
-      <h2>Danh sách Khoa</h2>
-      <Button variant="primary" onClick={() => setIsTableFacultyVisible(!isTableFacultyVisible)}>
+      <ToastContainer />
+      <h2 className="text-center text-blue-700 font-bold mb-5 mt-2">
+        Quản Lý Khoa
+      </h2>      
+      <Button variant="info" onClick={() => setIsTableFacultyVisible(!isTableFacultyVisible)}>
         {isTableFacultyVisible ? "Ẩn danh sách" : "Hiển thị danh sách"}
       </Button>
-      <ModalCreateFaculty setFaculties={setFaculties}/>
+      <ModalCreateFaculty loadFaculties={loadFaculties}/>
       {isTableFacultyVisible &&  
-      <Table striped bordered hover size="sm">
+      <Table className="mt-5" striped bordered hover size="sm">
         <thead>
         <tr className="text-center">
             <th>ID</th>
@@ -60,7 +66,7 @@ const ManageFaculty = () => {
           </tr>
         </thead>
         <tbody>
-          {faculties.map(faculty => (
+          {filteredFaculties.map(faculty => (
             <tr key={faculty.id}>
               <td>{faculty.id}</td>
               <td>{faculty.name}</td>
@@ -79,21 +85,46 @@ const ManageFaculty = () => {
               <img className="mb-10 -mr-200 w-20 zoomable-image" variant="top" src={faculty.image_url} />
               </td>
               <td className="p-2">
-                <Button className="w-100 mb-1" variant="success">
+                <Button className="w-100" variant="success">
                   Xem
                 </Button>
-                <ModalUpdateFaculty faculties={faculties} setFaculties={setFaculties} faculty={faculty} />
-                <Button className="w-100 mb-1"  
+                <ModalUpdateFaculty loadFaculties={loadFaculties} faculties={faculties} setFaculties={setFaculties} faculty={faculty} />
+                <Button className="w-100"  
                         variant="danger"
-                        onClick={() => handleDelete(faculty.id)}
+                        onClick={() => setShowDeleteModal({ [faculty.id]: true })}
                         >
                   Xóa
                 </Button>
               </td>
+              {/* Modal hỏi người dùng */}
+              <Modal 
+                      show={showDeleteModal[faculty.id]}
+                      onHide={() => setShowDeleteModal({ [faculty.id]: false })}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Xác nhận xóa</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Bạn có chắc muốn xóa dòng này?</Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                        Hủy
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => {
+                          // Gọi hàm xóa bài viết tại đây
+                          handleDelete(faculty.id);
+                          setShowDeleteModal(false); // Đóng modal sau khi xóa
+                        }}
+                      >
+                        Xóa
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
             </tr>
           ))}
         </tbody>
       </Table> }
+
     </div>
     )
 }

@@ -15,7 +15,7 @@ function MessageList({ roomId }) {
     });
 
     return (
-        <div className="message-list-container" ref={containerRef}>
+        <div className="message-list-container bg-blue-100 border-2 border-solid border-gray mt-2" ref={containerRef}>
             <ul className="message-list">
                 {messages.map((x) => (
                     <Message
@@ -32,8 +32,8 @@ function MessageList({ roomId }) {
 function Message({ message, isOwnMessage }) {
     const { displayName, text } = message;
     return (
-        <li className={['message', isOwnMessage && 'own-message'].join(' ')}>
-            <h4 className="sender">{isOwnMessage ? 'You' : displayName}</h4>
+        <li className={['message', isOwnMessage && 'own-message mr-2'].join(' ')}>
+            <h4 className="sender">{isOwnMessage ? 'Bạn' : displayName}</h4>
             <div>{text}</div>
         </li>
     );

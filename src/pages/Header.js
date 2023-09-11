@@ -1,5 +1,4 @@
 
-
 import '../assets/CSS/Header.css';
 import { useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, Image, Nav, Navbar, NavDropdown, Row } from "react-bootstrap";
@@ -10,9 +9,14 @@ import { MyUserContext } from '../App';
 import ButtonAdmin from '../components/Admin/Button/ButtonAdmin';
 import { toastError } from '../components/Toast/Notification';
 
-const Header = () => {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import Bell from '../components/Bell';
+
+const Header = ( {searchKeyword, handleSearchInputChange} ) => {
     const [categories, setCategories] = useState([]);
     const [user,dispatch] = useContext(MyUserContext);
+    
 
     const loadCategories = async () => {
         try {
@@ -40,53 +44,58 @@ const Header = () => {
         })
       }
   
-  // const [kw, setKw] = useState("")
-  // const nav = useNavigate();
-
-  // useEffect(() => {
-  //     const loadCates = async () => {
-  //         // let res = await fetch("http://localhost:8085/SaleAppV1/api/categories/");
-  //         // let data = await res.json();
-  //         let res = await Apis.get(endpoints['categories']);
-
-  //         setCategories(res.data);
-  //     }
-
-  //     loadCates();
-  // }, []);
-
-  // const search = (evt) => {
-  //     evt.preventDefault();
-
-  //     nav(`/?kw=${kw}`);
-  // }
-  
     return (
+        
         <Navbar expand="lg" className="custom-background">
-            <Container className='nav-bar-container' >
-                <Image className='w-1/3' to="/home"  src="https://ou.edu.vn/wp-content/uploads/2016/08/Logo.png" />
-                {/* <Navbar.Brand className='font-bold' href="/home">Open University</Navbar.Brand> */}
+            <Container className='nav-bar-container !block' >
+                <Row>
+                   <Col>
+                     <Image  to="/home"  src="https://ou.edu.vn/wp-content/uploads/2016/08/Logo.png" />
+                   </Col>
+                   <Col md={3} className='mt-4'>
+                    <Form  inline>
+                            <Form.Control
+                            type="text"
+                            placeholder="Nhập từ khóa..."
+                            value={searchKeyword} 
+                            onChange={handleSearchInputChange}
+                            className=" mr-sm-2"
+                            />
+                        </Form>    
+                   </Col>
+                </Row>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
               
             </Navbar.Collapse>
-            <Nav  className="me-aut bg-yellow-400 font-bold ">
-                    <Nav.Link className='hover:bg-green-700' href="/home">TRANG CHỦ</Nav.Link>
-            
-                    <NavDropdown className='hover:bg-green-700' title="THÔNG TIN TUYỂN SINH" id="basic-nav-dropdown">
+            <Nav  className="me-aut bg-yellow-400 font-bold mt-2">
+                    <Nav.Link className='hover:bg-green-700 p-3' href="/home">TRANG CHỦ</Nav.Link>
+                    <NavDropdown className='hover:bg-green-700 p-2' title="THÔNG TIN TUYỂN SINH" id="basic-nav-dropdown">
                         {categories.map(category => {
                         const categoryPath = generateCategoryPath(category.name)
                             return <Nav.Link href={`/home#${categoryPath}`} className="dropdown-item nav-link" id="basic-nav-dropdown" >{category.name}</Nav.Link>
                         })}
                     </NavDropdown>
 
-                    <Nav.Link className='hover:bg-green-700' href="/khoa"> KHOA - NGÀNH</Nav.Link>
-                    {user === null ? <Nav.Link className='hover:bg-green-700' href="/dangnhap">ĐĂNG NHẬP</Nav.Link> : <>
-                        <Link className='nav-link text-danger' to="/">Chào {user.username}</Link>
-                        <Nav.Link className='hover:bg-green-700' onClick={logout}>ĐĂNG XUẤT</Nav.Link>
+                    <Nav.Link className='hover:bg-green-700 p-3' href="/khoa"> KHOA - NGÀNH</Nav.Link>
+                    <Nav.Link className='hover:bg-green-700 p-3' href='/diem-chuan-hang-nam'>ĐIỂM CHUẨN CÁC NĂM</Nav.Link>
+                    <Nav.Link className='hover:bg-green-700 p-3' href='/room'>PHÒNG CHAT</Nav.Link>
+
+                    {user === null ? <Nav.Link className='hover:bg-green-700  p-3' href="/dangnhap">ĐĂNG NHẬP</Nav.Link> : <>
+                        <Link className='nav-link text-danger p-3' to="/home">
+                                <Row>
+                                    <Col md={4}><Image className='w-16' src={user.avatar} roundedCircle /></Col>
+                                    <Col md={8}>{user.username}</Col>
+                                </Row>
+                        </Link>
+                        <Bell />
+
+                        <Nav.Link className='hover:bg-green-700 p-3' onClick={logout}>ĐĂNG XUẤT</Nav.Link>
                     </>}
+                    <ButtonAdmin />
+
             </Nav>
-            <ButtonAdmin />
+           
 
             {/* <Form onSubmit={search} inline>
                 <Row>

@@ -23,7 +23,31 @@ export const endpoints = {
 
     "articles": `${SERVER_CONTEXT}/api/articles/`,
     "create_article": `${SERVER_CONTEXT}/api/create_article/`,
+    "update_article": `${SERVER_CONTEXT}/api/create_article/`,
     "delete_article": (articleId) => `${SERVER_CONTEXT}/api/delete_article/${articleId}/`,
+
+    "comments": (articleId) => `${SERVER_CONTEXT}/api/comments/article/${articleId}/`,
+    "create_comment": (articleId) => `${SERVER_CONTEXT}/api/view_article/${articleId}/comment_article/`,
+    "delete_comment": (articleId) => `${SERVER_CONTEXT}/api/delete_comment/${articleId}/`,
+
+    "majors": `${SERVER_CONTEXT}/api/majors/`,
+    "create_major": `${SERVER_CONTEXT}/api/create_major/`,
+    "update_major": `${SERVER_CONTEXT}/api/create_major/`,
+    "delete_major": (majorId) => `${SERVER_CONTEXT}/api/delete_major/${majorId}/`,
+
+    "scores": `${SERVER_CONTEXT}/api/scores/`,
+    "create_score": `${SERVER_CONTEXT}/api/create_score/`,
+    "update_score": `${SERVER_CONTEXT}/api/create_score/`,
+    "delete_score": (majorId) => `${SERVER_CONTEXT}/api/delete_score/${majorId}/`,
+
+    "livestreams": `${SERVER_CONTEXT}/api/livestreams/`,
+    "create_livestream": `${SERVER_CONTEXT}/api/create_livestream/`,
+    "update_livestream": `${SERVER_CONTEXT}/api/create_livestream/`,
+    "delete_livestream": (majorId) => `${SERVER_CONTEXT}/api/delete_livestream/${majorId}/`,
+
+    "questions": (liveId) => `${SERVER_CONTEXT}/api/questions/livestream/${liveId}/`,
+    "send_question": `${SERVER_CONTEXT}/api/questions/send_question/`,
+
 }
 
 export const authApi = () => {
